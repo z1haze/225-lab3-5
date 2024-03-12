@@ -5,7 +5,7 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'roseaw-dockerhub'
         DOCKER_IMAGE = 'cithit/selenium'                                                                    //<------change this
         IMAGE_TAG = "build-${BUILD_NUMBER}"
-        GITHUB_URL = 'https://github.com/miamioh-cit/selenium.git'                                          //<------change this
+        GITHUB_URL = 'https://github.com/miamioh-cit/225-lab3-5.git'                                          //<------change this
         KUBECONFIG = credentials('roseaw-selenium')                                                         //<------change this
     }
 
@@ -54,47 +54,7 @@ pipeline {
             }
         }
 
-         stage ("Pull Selenium") {
-            steps {
-                script {
-                    // Define the image name and tag
-                    def imageName = 'selenium/standalone-chrome:latest'
-                    // Check if the image exists
-                    def imageExists = sh(script: "docker images -q ${imageName}", returnStdout: true).trim()
-                    if (imageExists == '') {
-                        // Image does not exist, so pull it
-                        echo "Image ${imageName} not found. Pulling..."
-                        sh "docker pull ${imageName}"
-                    } else {
-                        // Image exists
-                        echo "Image ${imageName} already exists."
-                    }
-                }
-            }
-        }
-      
-        stage ("Run Selenium") {
-            steps {
-                sh 'echo running selemium' //'docker run -d -p 4444:4444 --shm-size="2g" ${imageName}'
-            }
-        }
-        
-        stage ("Pull Dastardly") {
-            steps {
-                sh 'docker pull public.ecr.aws/portswigger/dastardly:latest'
-            }
-        }
-        stage ("Run Dastardly") {
-            steps {
-                //                                                                 ###change the IP address in this section to your cluster IP address!!!!####
-                sh '''
-                    docker run --user $(id -u) -v ${WORKSPACE}:${WORKSPACE}:rw \
-                    -e BURP_START_URL=http://10.48.10.174 \
-                    -e BURP_REPORT_FILE_PATH=${WORKSPACE}/dastardly-report.xml \
-                    public.ecr.aws/portswigger/dastardly:latest
-                '''
-            }
-        }
+ 
        stage('Deploy to Prod Environment') {
             steps {
                 script {
