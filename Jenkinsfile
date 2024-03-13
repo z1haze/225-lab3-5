@@ -3,10 +3,10 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'roseaw-dockerhub'
-        DOCKER_IMAGE = 'cithit/selenium'                                                                    //<------change this
+        DOCKER_IMAGE = 'cithit/roseaw'                                                                    //<------change this
         IMAGE_TAG = "build-${BUILD_NUMBER}"
         GITHUB_URL = 'https://github.com/miamioh-cit/225-lab3-5.git'                                          //<------change this
-        KUBECONFIG = credentials('roseaw-selenium')                                                         //<------change this
+        KUBECONFIG = credentials('roseaw-225')                                                         //<------change this
     }
 
     stages {
@@ -54,7 +54,6 @@ pipeline {
             }
         }
 
- 
        stage('Deploy to Prod Environment') {
             steps {
                 script {
@@ -66,6 +65,7 @@ pipeline {
                 }
             }
         }
+        
         stage('Check Kubernetes Cluster') {
             steps {
                 script {
@@ -75,9 +75,7 @@ pipeline {
         }
     }
     post {
-        always {
-            junit testResults: 'dastardly-report.xml', skipPublishingChecks: true
-        }
+
         success {
             slackSend color: "good", message: "Build Completed: ${env.JOB_NAME} ${env.BUILD_NUMBER}"
         }
